@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Uwant Machine Fault Information Collection Form</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+        body {
+            background-color: #f5f7fa;
+            padding: 20px;
+        }
+        .survey-container {
+            max-width: 700px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h2 {
+            color: #333;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #555;
+        }
+        input, textarea, select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        /* 优化文件上传控件样式 */
+        input[type="file"] {
+            padding: 3px;
+            font-size: 13px;
+        }
+        textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+        .hint {
+            font-size: 12px;
+            color: #999;
+            margin-top: 5px;
+        }
+        button {
+            width: 100%;
+            padding: 12px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .success {
+            color: #2e8b57;
+            text-align: center;
+            margin-top: 15px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="survey-container">
+        <h2>Uwant Machine Fault Information Collection Form</h2>
+        <form id="faultSurveyForm">
+            <!-- Order Number -->
+            <div class="form-group">
+                <label for="orderNumber">1. Order Number <span style="color:red">*</span></label>
+                <input type="text" id="orderNumber" placeholder="Please enter your purchase order number">
+            </div>
+
+            <!-- Machine Model -->
+            <div class="form-group">
+                <label for="machineModel">2. Machine Model <span style="color:red">*</span></label>
+                <input type="text" id="machineModel" placeholder="e.g.: Y100">
+            </div>
+
+            <!-- Detailed Fault Description -->
+            <div class="form-group">
+                <label for="faultDesc">3. Detailed Fault Description <span style="color:red">*</span></label>
+                <textarea id="faultDesc" placeholder="Please describe the specific problem with the machine, e.g.: abnormal indicator light, failure to start, abnormal noise, etc."></textarea>
+            </div>
+
+            <!-- Fault Video/Image File (改为文件上传) -->
+            <div class="form-group">
+                <label for="mediaFile">4. Fault Video/Image File <span style="color:red">*</span></label>
+                <input type="file" id="mediaFile" accept="image/*,video/*">
+                <div class="hint">Note: The video should clearly show the machine fault phenomenon, recommended duration: 10-30 seconds. Supported formats: JPG/PNG/MP4/MOV</div>
+            </div>
+
+            <!-- Recipient Info (Phone + Address) -->
+            <div class="form-group">
+                <label for="receiveInfo">5. Recipient Info (Phone + Address) <span style="color:red">*</span></label>
+                <textarea id="receiveInfo" placeholder="Please enter recipient's contact phone number + detailed address (state/city/district/street/house number)"></textarea>
+                <div class="hint">Example: +1 (123) 456-7890, XX Building, XX Community, XX Street, New York, NY 10001, USA</div>
+            </div>
+
+            <!-- SN Code (新增第六点) -->
+            <div class="form-group">
+                <label for="snCode">6. Machine SN Code <span style="color:red">*</span></label>
+                <input type="text" id="snCode" placeholder="USEG21BAK1ST004546">
+                <div class="hint">Note: SN code is located below the barcode on the machine. The above is an example, please enter the actual code.</div>
+            </div>
+
+            <button type="submit">Submit Information</button>
+            <div class="success" id="successMsg">
+                Thank you for your cooperation! We have received your information and will process and reply to you as soon as possible.
+            </div>
+        </form>
+    </div>
+
+    <script>
+        // Get form and prompt elements
+        const form = document.getElementById('faultSurveyForm');
+        const successMsg = document.getElementById('successMsg');
+
+        // Form submission event
+        form.addEventListener('submit', function(e) {
+            // Prevent default submission behavior
+            e.preventDefault();
+            
+            // Get form values
+            const orderNumber = document.getElementById('orderNumber').value.trim();
+            const machineModel = document.getElementById('machineModel').value.trim();
+            const faultDesc = document.getElementById('faultDesc').value.trim();
+            const mediaFile = document.getElementById('mediaFile').files[0]; // 获取上传文件
+            const receiveInfo = document.getElementById('receiveInfo').value.trim();
+            const snCode = document.getElementById('snCode').value.trim(); // 获取SN编码
+
+            // Form validation: Required fields check
+            if (!orderNumber) {
+                alert('Please enter your order number!');
+                return;
+            }
+            if (!machineModel) {
+                alert('Please enter your machine model!');
+                return;
+            }
+            if (!faultDesc) {
+                alert('Please describe the fault details!');
+                return;
+            }
+            // 验证文件是否上传
+            if (!mediaFile) {
+                alert('Please upload the fault video/image file!');
+                return;
+            }
+            if (!receiveInfo) {
+                alert('Please enter recipient info (phone + address)!');
+                return;
+            }
+            // 验证SN编码是否填写
+            if (!snCode) {
+                alert('Please enter the machine SN code!');
+                return;
+            }
+
+            // Simulate submission (replace with API request in actual projects)
+            console.log('Submitted fault information:', {
+                orderNumber,
+                machineModel,
+                faultDesc,
+                mediaFileName: mediaFile.name, // 打印上传文件名
+                mediaFileSize: `${(mediaFile.size / 1024).toFixed(2)} KB`, // 打印文件大小
+                receiveInfo,
+                snCode // 新增SN编码字段
+            });
+
+            // Show success prompt
+            successMsg.style.display = 'block';
+            // Reset form
+            form.reset();
+            // Hide success prompt after 5 seconds
+            setTimeout(() => {
+                successMsg.style.display = 'none';
+            }, 5000);
+        });
+    </script>
+</body>
+</html>
