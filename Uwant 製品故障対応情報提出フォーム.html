@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Uwant 製品故障対応情報提出フォーム</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Meiryo", "MS PGothic", sans-serif;
+        }
+        body {
+            background-color: #f5f7fa;
+            padding: 20px;
+        }
+        .survey-container {
+            max-width: 700px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h2 {
+            color: #333;
+            margin-bottom: 20px;
+            text-align: center;
+            font-size: 1.5em;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #555;
+        }
+        input, textarea, select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        input[type="file"] {
+            padding: 3px; /* 调整文件上传框内边距，更美观 */
+        }
+        textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+        .hint {
+            font-size: 12px;
+            color: #999;
+            margin-top: 5px;
+        }
+        button {
+            width: 100%;
+            padding: 12px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .success {
+            color: #2e8b57;
+            text-align: center;
+            margin-top: 15px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="survey-container">
+        <h2>Uwant 製品故障対応情報提出フォーム</h2>
+        <form id="faultSurveyForm">
+            <!-- 1. 注文番号 -->
+            <div class="form-group">
+                <label for="orderNumber">1. 注文番号 <span style="color:red">*</span></label>
+                <input type="text" id="orderNumber" placeholder="ご購入の注文番号をご記入ください">
+            </div>
+
+            <!-- 2. 機種名 -->
+            <div class="form-group">
+                <label for="machineModel">2. 機種名 <span style="color:red">*</span></label>
+                <input type="text" id="machineModel" placeholder="例：Y100">
+            </div>
+
+            <!-- 3. 故障詳細説明 -->
+            <div class="form-group">
+                <label for="faultDesc">3. 故障の詳細な説明 <span style="color:red">*</span></label>
+                <textarea id="faultDesc" placeholder="機械に発生した具体的な問題を記載してください。
+例：インジケーターランプの異常、起動できない、異音がするなど"></textarea>
+            </div>
+
+            <!-- 4. 故障動画/画像（改为文件上传） -->
+            <div class="form-group">
+                <label for="mediaFile">4. 故障動画/画像ファイル <span style="color:red">*</span></label>
+                <input type="file" id="mediaFile" accept="image/*,video/*" placeholder="故障の動画または画像をアップロードしてください">
+                <div class="hint">ご注意：動画には機械の故障現象を明確に映し出してください。推奨時間：10～30秒。サポート形式：JPG/PNG/MP4/MOV</div>
+            </div>
+
+            <!-- 5. 受取情報 -->
+            <div class="form-group">
+                <label for="receiveInfo">5. 受取情報（連絡先電話番号＋詳細住所） <span style="color:red">*</span></label>
+                <textarea id="receiveInfo" placeholder="受取人の連絡先電話番号＋詳細住所を記入してください（都道府県/市区町村/町名/番地）"></textarea>
+                <div class="hint">例：090-1234-5678 東京都港区XX町XX番地XX号ビルXX室</div>
+            </div>
+
+            <!-- 6. SNコード（新增） -->
+            <div class="form-group">
+                <label for="snCode">6. 機器のSNコード <span style="color:red">*</span></label>
+                <input type="text" id="snCode" placeholder="JPED30BZQ1ST000229">
+                <div class="hint">ご注意：SNコードは機器のバーコードの下に記載されています。上記は例ですので、実際のコードを記入してください。</div>
+            </div>
+
+            <button type="submit">情報を提出する</button>
+            <div class="success" id="successMsg">
+                ご協力ありがとうございます！情報を受け取りましたので、速やかに処理し、ご連絡いたします。
+            </div>
+        </form>
+    </div>
+
+    <script>
+        // フォームと通知要素の取得
+        const form = document.getElementById('faultSurveyForm');
+        const successMsg = document.getElementById('successMsg');
+
+        // フォーム送信イベント
+        form.addEventListener('submit', function(e) {
+            // デフォルトの送信動作を阻止
+            e.preventDefault();
+            
+            // フォーム値の取得
+            const orderNumber = document.getElementById('orderNumber').value.trim();
+            const machineModel = document.getElementById('machineModel').value.trim();
+            const faultDesc = document.getElementById('faultDesc').value.trim();
+            const mediaFile = document.getElementById('mediaFile').files[0]; // 文件上传值
+            const receiveInfo = document.getElementById('receiveInfo').value.trim();
+            const snCode = document.getElementById('snCode').value.trim(); // SN编码值
+
+            // フォーム検証：必須項目の確認
+            if (!orderNumber) {
+                alert('注文番号をご記入ください！');
+                return;
+            }
+            if (!machineModel) {
+                alert('機種名をご記入ください！');
+                return;
+            }
+            if (!faultDesc) {
+                alert('故障の詳細を記載してください！');
+                return;
+            }
+            if (!mediaFile) { // 验证文件是否上传
+                alert('故障動画/画像ファイルをアップロードしてください！');
+                return;
+            }
+            if (!receiveInfo) {
+                alert('受取情報（連絡先電話番号＋詳細住所）をご記入ください！');
+                return;
+            }
+            if (!snCode) { // 验证SN编码
+                alert('機器のSNコードをご記入ください！');
+                return;
+            }
+
+            // 送信の模擬（実際のプロジェクトではファイルアップロードAPIに置き換え）
+            console.log('提出された故障情報：', {
+                orderNumber,
+                machineModel,
+                faultDesc,
+                mediaFileName: mediaFile.name, // 仅打印文件名（实际项目需处理文件流）
+                mediaFileSize: mediaFile.size,
+                receiveInfo,
+                snCode
+            });
+
+            // 送信成功の通知を表示
+            successMsg.style.display = 'block';
+            // フォームをリセット
+            form.reset();
+            // 5秒後に通知を非表示にする
+            setTimeout(() => {
+                successMsg.style.display = 'none';
+            }, 5000);
+        });
+    </script>
+</body>
+</html>
